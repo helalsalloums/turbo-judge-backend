@@ -1,0 +1,42 @@
+
+generator client {
+  provider = "prisma-client-id"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  submissions Submission[]
+}
+
+model Problem {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String       @db.Text
+  difficulty  String       // Easy, Medium, Hard
+  timeLimit   Int          @default(1000) // in milliseconds
+  memoryLimit Int          @default(256)  // in megabyte
+  testCases   Json         // input and output
+  submissions Submission[]
+}
+
+model Submission {
+  id            Int      @id @default(autoincrement())
+  code          String   @db.Text
+  language      String   // C++, Python, Java
+  status        String   @default("Pending") // Accepted, Wrong Answer, TLE
+  executionTime Float?
+  memoryUsed    Int?
+  userId        Int
+  problemId     Int
+  user          User     @relation(fields: [userId], references: [id])
+  problem       Problem  @relation(fields: [problemId], references: [id])
+  createdAt     DateTime @default(now())
+}
