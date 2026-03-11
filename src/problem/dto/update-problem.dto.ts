@@ -1,30 +1,4 @@
-import { IsArray, IsInt, IsOptional, IsString, Min } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { CreateProblemDto } from "./create-problem.dto";
 
-export class UpdateProblemDto {
-  @IsOptional()
-  @IsString()
-  title?: string;
-
-  @IsOptional()
-  @IsString()
-  text?: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(800)
-  difficulty?: number;
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  topics?: string[];
-
-
-  @IsOptional()
-  @IsInt()
-  memoryLimit?: number;
-
-  @IsOptional()
-  @IsInt()
-  timeLimit?: number;
-}
+export class UpdateProblemDto extends PartialType(CreateProblemDto) { }
