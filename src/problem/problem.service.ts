@@ -43,4 +43,15 @@ export class ProblemService {
 
     return { message: "Problem Updated", problem: updated }
   }
+
+  async remove(id: number) {
+    await this.findOne(id);
+
+    await this.prisma.problem.delete({
+      where: { id }
+
+    });
+
+    return { message: `Problem ${id} deleted` }
+  }
 }
