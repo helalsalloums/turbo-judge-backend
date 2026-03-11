@@ -16,4 +16,9 @@ export class ProblemController {
   findOne(@Param('id') id: string) {
     return this.problemService.findOne(+id);
   }
+
+  @Get()
+  findAll() {
+    return this.problemService.findAll();
+  }
 }

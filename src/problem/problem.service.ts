@@ -25,4 +25,10 @@ export class ProblemService {
 
     return { message: "Problem found", problem }
   }
+
+  async findAll() {
+    const problems = await this.prisma.problem.findMany();
+
+    return { message: "Problems fetched", problems }
+  }
 }

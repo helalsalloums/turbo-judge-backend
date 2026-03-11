@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/problem/1
+  url: http://localhost:3000/problem
   body:
     type: json
     data: |-
