@@ -4,8 +4,8 @@ info:
   seq: 1
 
 http:
-  method: POST
-  url: http://localhost:3000/problem
+  method: GET
+  url: http://localhost:3000/problem/1
   body:
     type: json
     data: |-
