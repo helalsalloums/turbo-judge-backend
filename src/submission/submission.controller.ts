@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { SubmissionService } from './submission.service';
+import { CreateProblemDto } from 'src/problem/dto/create-problem.dto';
 
 @Controller('submission')
 export class SubmissionController {
@@ -21,4 +22,5 @@ export class SubmissionController {
   findAll() {
     return this.submissionService.findAll();
   }
+
 }
