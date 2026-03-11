@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Delete, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
+import { UpdateProblemDto } from './dto/update-problem.dto';
 
 @Injectable()
 export class ProblemService {
@@ -30,5 +31,16 @@ export class ProblemService {
     const problems = await this.prisma.problem.findMany();
 
     return { message: "Problems fetched", problems }
+  }
+
+  async update(id: number, updateProblemDto: UpdateProblemDto) {
+    await this.findOne(id); // just to throw exception if not found
+
+    const updated = await this.prisma.problem.update({
+      where: { id },
+      data: updateProblemDto
+    });
+
+    return { message: "Problem Updated", problem: updated }
   }
 }
