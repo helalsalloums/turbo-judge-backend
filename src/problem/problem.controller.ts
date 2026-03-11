@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
+import { UpdateProblemDto } from './dto/update-problem.dto';
 
 @Controller('problem')
 export class ProblemController {
@@ -23,8 +24,8 @@ export class ProblemController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() createProblemDto: CreateProblemDto) {
-    return this.problemService.update(+id, createProblemDto);
+  update(@Param('id') id: string, @Body() updateProblemDto: UpdateProblemDto) {
+    return this.problemService.update(+id, updateProblemDto);
   }
 
   @Delete(':id')
