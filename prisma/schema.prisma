@@ -36,6 +36,20 @@ model Submission {
   time        Int?
   memory      Int?
   createdAt   DateTime  @default(now())
+  problem     Problem   @relation(fields: [problemId], references: [id])
+}
+
+model Problem {
+  id          Int       @id @default(autoincrement())
+  title       String
+  text        String
+  difficulty  Int
+  topics      String[]  @default([])
+  timeLimit   Int
+  memoryLimit Int
+  createdAt   DateTime  @default(now())
+  testCases   TestCase[]
+  submissions Submission[]
 }
 
 model TestCase {
