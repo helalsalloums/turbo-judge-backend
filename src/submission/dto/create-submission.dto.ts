@@ -11,5 +11,4 @@ export class CreateSubmissionDto {
   @IsNumber()
   problemId: number;
 
-
 }

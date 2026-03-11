@@ -4,15 +4,18 @@ info:
   seq: 1
 
 http:
-  method: GET
-  url: http://localhost:3000/submission
+  method: POST
+  url: http://localhost:3000/problem
   body:
     type: json
     data: |-
       {
-        "code": "hehehehaaaaaa",
-        "language": "c++",
-        "problemId": 2
+        "title": "Two Sum",
+        "text": "Given an array of integers, return indices of the two numbers that add up to a target.",
+        "difficulty": 1200,
+        "topics": ["arrays", "hash-map"],
+        "timeLimit": 1000,
+        "memoryLimit": 256
       }
   auth: inherit
 
