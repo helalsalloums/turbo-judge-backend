@@ -25,6 +25,12 @@ export class SubmissionService {
 
     if (!submission) throw new NotFoundException(`Submission #${id} Not Found`)
 
-    return { message: "Submission found", submission: submission }
+    return { message: "Submission found", submission }
+  }
+
+  async findAll() {
+    const submissions = await this.prisma.submission.findMany();
+
+    return { message: "Submissions fetched", submissions };
   }
 }

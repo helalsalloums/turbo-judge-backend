@@ -16,4 +16,9 @@ export class SubmissionController {
   findOne(@Param('id') id: string) {
     return this.submissionService.findOne(+id);
   }
+
+  @Get()
+  findAll() {
+    return this.submissionService.findAll();
+  }
 }
