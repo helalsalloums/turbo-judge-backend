@@ -4,15 +4,15 @@ info:
   seq: 1
 
 http:
-  method: POST
-  url: http://localhost:3000/submission
+  method: GET
+  url: http://localhost:3000/submission/3
   body:
     type: json
     data: |-
       {
-        "code": "print('hello')",
-        "language": "python",
-        "problemId": 1
+        "code": "hehehehaaaaaa",
+        "language": "c++",
+        "problemId": 2
       }
   auth: inherit
 

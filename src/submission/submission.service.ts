@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -18,4 +18,13 @@ export class SubmissionService {
     return { message: "Submission created", submission: newSubmission }
   }
 
+  async findOne(id: number) {
+    const submission = await this.prisma.submission.findUnique({
+      where: { id: id }
+    })
+
+    if (!submission) throw new NotFoundException(`Submission #${id} Not Found`)
+
+    return { message: "Submission found", submission: submission }
+  }
 }

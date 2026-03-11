@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { SubmissionService } from './submission.service';
 
@@ -10,5 +10,10 @@ export class SubmissionController {
   @Post()
   create(@Body() createSubmissionDto: CreateSubmissionDto) {
     return this.submissionService.create(createSubmissionDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.submissionService.findOne(+id);
   }
 }
