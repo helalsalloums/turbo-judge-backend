@@ -1,40 +1,44 @@
-import { Injectable , BadRequestException } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class AuthService {
-    constructor(private prisma : PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-    async signup(dto : SignupDto) {
-        const userExists = await this.prisma.user.findUnique({
-            where: { email : dto.email }
-        })
+  async signup(dto: SignupDto) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: dto.email }
+    })
 
-        if(userExists) throw new BadRequestException("Email already taken")
+    if (userExists) throw new BadRequestException("Email already taken")
 
-        const newUser = await this.prisma.user.create({
-            data : {
-                email:dto.email,
-                password:dto.password,
-                name : dto.name,
-            }
-        })
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-        return {message : "User created" , user:{email:newUser.email}}
+    const newUser = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+        name: dto.name,
+      }
+    })
+
+    return { message: "User created", user: { email: newUser.email } }
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email }
+    })
+
+    if (!user || user.password !== dto.password) {
+      throw new BadRequestException("Invalid credentials")
     }
 
-    async login(dto : LoginDto) {
-        const user = await this.prisma.user.findUnique({
-            where : {email : dto.email}
-        })
-
-        if(!user || user.password !== dto.password) {
-            throw new BadRequestException("Invalid credentials")
-        }
-
-        return {message : "Logged in successfully" , userId : user.id}
-    }
+    return { message: "Logged in successfully", userId: user.id }
+  }
 }
