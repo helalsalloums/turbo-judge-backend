@@ -35,7 +35,14 @@ export class AuthService {
       where: { email: dto.email }
     })
 
-    if (!user || user.password !== dto.password) {
+
+    if (!user) {
+      throw new BadRequestException("Invalid credentials")
+    }
+
+    const passwordCorrect = await bcrypt.compare(dto.password, user.password);
+
+    if (!passwordCorrect) {
       throw new BadRequestException("Invalid credentials")
     }
 
