@@ -4,11 +4,12 @@ import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 
 import * as bcrypt from 'bcrypt';
+import { JwtService } from "@nestjs/jwt";
 
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService, private jwt: JwtService) { }
 
   async signup(dto: SignupDto) {
     const userExists = await this.prisma.user.findUnique({
@@ -46,6 +47,11 @@ export class AuthService {
       throw new BadRequestException("Invalid credentials")
     }
 
-    return { message: "Logged in successfully", userId: user.id }
+    const token = await this.jwt.signAsync({
+      sub: user.id,
+      role: user.role
+    });
+
+    return { message: "Logged in successfully", access_token: token }
   }
 }
