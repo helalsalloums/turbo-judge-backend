@@ -19,8 +19,8 @@ export class AuthController {
   }
 
   @Post('logout')
-  logout() {
-    return { message: 'Logged out' };
+  logout(@Body() body: { refresh_token: string }) {
+    return this.authService.logout(body.refresh_token);
   }
 
   @Post('refresh')

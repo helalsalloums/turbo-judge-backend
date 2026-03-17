@@ -100,4 +100,28 @@ export class AuthService {
     }
     throw new UnauthorizedException("didn't find your Refresh Token");
   }
+
+  // TODO : same for refresh
+  // idempotent logout
+  async logout(refreshToken: string) {
+    const payload = await this.jwt.verifyAsync(refreshToken, {
+      secret: process.env.REFRESH_JWT_SECRET!
+    });
+
+    const DBrefreshTokens = await this.prisma.refreshToken.findMany({
+      where: { userId: payload.sub }
+    });
+
+    for (let i = 0; i < DBrefreshTokens.length; i++) {
+      const match = await bcrypt.compare(refreshToken, DBrefreshTokens[i].tokenHash);
+      if (match) {
+        await this.prisma.refreshToken.delete({
+          where: { id: DBrefreshTokens[i].id }
+        });
+        return { message: "Token deleted successfully" }
+      }
+    }
+    return { message: "Token wasn't found" }
+
+  }
 }
