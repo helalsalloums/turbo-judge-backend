@@ -50,8 +50,25 @@ export class AuthService {
     const token = await this.jwt.signAsync({
       sub: user.id,
       role: user.role
+    }, { expiresIn: process.env.JWT_EXPIRE_IN as any });
+
+    const refreshToken = await this.jwt.signAsync({
+      sub: user.id,
+      role: user.role
+    }, {
+      expiresIn: process.env.REFRESH_JWT_EXPIRE_IN as any,
+      secret: process.env.REFRESH_JWT_SECRET!
     });
 
-    return { message: "Logged in successfully", access_token: token }
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.prisma.refreshToken.create({
+      data: {
+        tokenHash: hashedRefreshToken,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      }
+    })
+
+    return { message: "Logged in successfully", access_token: token, refresh_token: refreshToken }
   }
 }
