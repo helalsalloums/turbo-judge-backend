@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: http://localhost:3000/problem/2
+  url: http://localhost:3000/problem/1
   headers:
     - name: Content-Type
       value: application/json
@@ -13,9 +13,11 @@ http:
     type: json
     data: |-
       {
-        "title": "meowwwwwwwwwwwwwwwwwwww Sum"
+        "title" : "heheheeeeeeeeeeeeeeeeeeeeee"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzczNzA1NjA0LCJleHAiOjE3NzQzMTA0MDR9.8UESd6fApU0AMAWJ9B28sbDpjZgJx42LTy9_vhar7Tk
 
 settings:
   encodeUrl: true
