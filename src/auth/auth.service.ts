@@ -115,10 +115,14 @@ export class AuthService {
     for (let i = 0; i < DBrefreshTokens.length; i++) {
       const match = await bcrypt.compare(refreshToken, DBrefreshTokens[i].tokenHash);
       if (match) {
-        await this.prisma.refreshToken.delete({
-          where: { id: DBrefreshTokens[i].id }
-        });
-        return { message: "Token deleted successfully" }
+        try {
+          await this.prisma.refreshToken.delete({
+            where: { id: DBrefreshTokens[i].id }
+          });
+          return { message: "Token deleted successfully" }
+        } catch {
+          return { message: "Token wasn't found" }
+        }
       }
     }
     return { message: "Token wasn't found" }
