@@ -6,6 +6,7 @@ import { SubmissionModule } from './submission/submission.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProblemModule } from './problem/problem.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { ProblemModule } from './problem/problem.module';
     AuthModule,
     SubmissionModule,
     PrismaModule,
-    ProblemModule
+    ProblemModule,
+    QueueModule
   ],
   controllers: [AppController],
   providers: [AppService],
