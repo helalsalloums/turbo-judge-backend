@@ -1,0 +1,28 @@
+info:
+  name: create problem
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:3000/problem
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Two Sum",
+        "text": "Given an array of integers, return indices of the two numbers that add up to a target.",
+        "difficulty": 1200,
+        "topics": ["arrays", "hash-map"],
+        "timeLimit": 1000,
+        "memoryLimit": 256
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3Mzc2MzA2MywiZXhwIjoxNzczNzY2NjYzfQ.ws9nmlqzkUdieb7T89nNAgIKSSkamaR017p6qQKGlRs
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

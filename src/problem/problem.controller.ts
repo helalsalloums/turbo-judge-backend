@@ -3,12 +3,15 @@ import { ProblemService } from './problem.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { Role } from 'src/auth/roles.decorator';
 
 @Controller('problem')
 export class ProblemController {
 
   constructor(private problemService: ProblemService) { }
 
+
+  @Role('ADMIN')
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createProblemDto: CreateProblemDto) {
