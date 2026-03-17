@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, BadRequestException, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -70,5 +70,34 @@ export class AuthService {
     })
 
     return { message: "Logged in successfully", access_token: token, refresh_token: refreshToken }
+  }
+
+  // TODO : refactor the token to store also the tokenId so we avoid the for loop
+  // TODO : rotate refresh token so it's used only once
+  async refresh(refreshToken: string) {
+    const payload = await this.jwt.verifyAsync(refreshToken, {
+      secret: process.env.REFRESH_JWT_SECRET!
+    });
+
+    const DBrefreshTokens = await this.prisma.refreshToken.findMany({
+      where: { userId: payload.sub }
+    });
+
+    for (let i = 0; i < DBrefreshTokens.length; i++) {
+      const match = await bcrypt.compare(refreshToken, DBrefreshTokens[i].tokenHash);
+      if (match) {
+        if (DBrefreshTokens[i].expiresAt < new Date()) {
+          throw new UnauthorizedException("Refresh Token Expired");
+        }
+
+        const token = await this.jwt.signAsync({
+          sub: payload.sub,
+          role: payload.role
+        }, { expiresIn: process.env.JWT_EXPIRE_IN as any });
+
+        return { message: "Token refreshed successfully", access_token: token, refresh_token: refreshToken }
+      }
+    }
+    throw new UnauthorizedException("didn't find your Refresh Token");
   }
 }

@@ -22,4 +22,10 @@ export class AuthController {
   logout() {
     return { message: 'Logged out' };
   }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  refresh(@Body() body: { refresh_token: string }) {
+    return this.authService.refresh(body.refresh_token);
+  }
 }
