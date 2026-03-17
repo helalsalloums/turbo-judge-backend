@@ -9,6 +9,7 @@ export class ProblemController {
 
   constructor(private problemService: ProblemService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createProblemDto: CreateProblemDto) {
     return this.problemService.create(createProblemDto);
@@ -30,6 +31,7 @@ export class ProblemController {
     return this.problemService.update(+id, updateProblemDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.problemService.remove(+id);
