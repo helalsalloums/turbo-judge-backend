@@ -4,6 +4,7 @@ import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { Role } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('problem')
 export class ProblemController {
@@ -12,7 +13,7 @@ export class ProblemController {
 
 
   @Role('ADMIN')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createProblemDto: CreateProblemDto) {
     return this.problemService.create(createProblemDto);
@@ -28,12 +29,14 @@ export class ProblemController {
     return this.problemService.findAll();
   }
 
+  @Role('ADMIN')
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProblemDto: UpdateProblemDto) {
     return this.problemService.update(+id, updateProblemDto);
   }
 
+  @Role('ADMIN')
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {

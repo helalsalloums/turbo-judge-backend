@@ -13,8 +13,9 @@ http:
     type: json
     data: |-
       {
-        "email" : "sisi@gmail.com",
-        "password" : "helal123"}
+        "email" : "hell@gmail.com",
+        "password" : "helal123"
+      }
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzczNzA1NjA0LCJleHAiOjE3NzQzMTA0MDR9.8UESd6fApU0AMAWJ9B28sbDpjZgJx42LTy9_vhar7Tk
