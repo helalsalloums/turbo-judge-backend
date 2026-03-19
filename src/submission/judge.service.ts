@@ -71,19 +71,26 @@ export class JudgeService {
       const sourceFile = `/tmp/${randomUUID()}.cpp`;
       await writeFile(sourceFile, submission!.code);
       const binaryFile = `/tmp/${randomUUID()}`;
+
+      this.submissionGateway.server.emit('submission:status', { submissionId, status: 'compiling' });
       await this.compile(sourceFile, binaryFile);
 
       for (let i = 0; i < testCases.length; i++) {
+
+        this.submissionGateway.server.emit('submission:status', { submissionId, status: `Running on test ${i + 1}` });
         const output = await this.run(binaryFile, testCases[i].input, problem!.timeLimit);
+
         if (output !== testCases[i].output) {
           throw (new Error(`Wrong answer on test ${i + 1}`));
         }
       }
 
+      this.submissionGateway.server.emit('submission:status', { submissionId, status: 'Accepted' });
       return 'Accepted';
 
     }
     catch (error) {
+      this.submissionGateway.server.emit('submission:status', { submissionId, status: error.message });
       if (error.message === 'Compilation failed') return 'CE';
       if (error.message.startsWith('Wrong answer')) return 'WA';
       if (error.message === 'TLE') return 'TLE';
