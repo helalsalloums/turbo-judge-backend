@@ -73,11 +73,28 @@ export class JudgeService {
       const binaryFile = `/tmp/${randomUUID()}`;
 
       this.submissionGateway.server.emit('submission:status', { submissionId, status: 'compiling' });
+      this.prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          status: 'Compiling'
+        }
+
+      });
+
       await this.compile(sourceFile, binaryFile);
 
       for (let i = 0; i < testCases.length; i++) {
 
         this.submissionGateway.server.emit('submission:status', { submissionId, status: `Running on test ${i + 1}` });
+
+        this.prisma.submission.update({
+          where: { id: submissionId },
+          data: {
+            status: `Running on test ${i + 1}`
+          }
+
+        });
+
         const output = await this.run(binaryFile, testCases[i].input, problem!.timeLimit);
 
         if (output !== testCases[i].output) {
@@ -86,11 +103,27 @@ export class JudgeService {
       }
 
       this.submissionGateway.server.emit('submission:status', { submissionId, status: 'Accepted' });
+
+      this.prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          status: 'Accepted'
+        }
+      });
+
       return 'Accepted';
 
     }
     catch (error) {
       this.submissionGateway.server.emit('submission:status', { submissionId, status: error.message });
+
+      this.prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          status: error.message
+        }
+      });
+
       if (error.message === 'Compilation failed') return 'CE';
       if (error.message.startsWith('Wrong answer')) return 'WA';
       if (error.message === 'TLE') return 'TLE';
