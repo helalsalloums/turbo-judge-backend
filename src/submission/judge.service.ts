@@ -3,11 +3,12 @@ import { spawn } from "child_process";
 import { randomUUID } from "crypto";
 import { writeFile } from "fs/promises";
 import { PrismaService } from "src/prisma/prisma.service";
+import { SubmissionGateway } from "./submission.gateway";
 
 @Injectable()
 export class JudgeService {
 
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService, private submissionGateway: SubmissionGateway) { }
 
   private async compile(sourceFile: string, outputBinary: string): Promise<void> {
     return new Promise((resolve, reject) => {
