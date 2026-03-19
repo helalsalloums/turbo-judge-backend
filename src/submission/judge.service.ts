@@ -15,6 +15,7 @@ export class JudgeService {
 
       const proc = spawn('g++', [sourceFile, '-o', outputBinary]);
 
+
       proc.on('close', (exitCode) => {
         if (exitCode === 0) {
           resolve();
