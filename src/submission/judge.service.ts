@@ -17,6 +17,29 @@ export class JudgeService {
       })
     });
   }
-  private async run(binary: string, input: string, timeLimit: number): Promise<string> { }
+  private async run(binary: string, input: string, timeLimit: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+
+      const proc = spawn(binary, []);
+      let output = '';
+
+      proc.stdout.on('data', (chunk) => {
+        output += chunk.toString();
+      });
+
+      proc.on('close', (exitCode) => {
+        resolve(output.trim());
+      });
+
+      setTimeout(() => {
+        proc.kill();
+        reject(new Error('TLE'));
+      }, timeLimit)
+
+      proc.stdin.write(input);
+      proc.stdin.end()
+    });
+  }
+
   async judge(submissionId: number): Promise<string> { }
 }
