@@ -54,6 +54,8 @@ export class JudgeService {
         where: { id: submissionId }
       })
 
+      if (!submission) throw new Error('Submission not found');
+
       const problem = await this.prisma.problem.findUnique({
         where: { id: submission!.problemId }
       })
@@ -62,7 +64,6 @@ export class JudgeService {
         where: { problemId: submission!.problemId }
       });
 
-      if (!submission) throw new Error('Submission not found');
       if (!problem) throw new Error('Problem not found');
       if (!testCases) throw new Error('TestCases not found');
 
@@ -80,8 +81,12 @@ export class JudgeService {
 
       return 'Accepted';
 
-    } catch (error) {
-      console.log(error);
+    }
+    catch (error) {
+      if (error.message === 'Compilation failed') return 'CE';
+      if (error.message.startsWith('Wrong answer')) return 'WA';
+      if (error.message === 'TLE') return 'TLE';
+      return 'Runtime Error';
     }
   }
 }
