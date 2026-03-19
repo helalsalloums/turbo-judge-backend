@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class SubmissionService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    @InjectQueue('submission') private submissionQueue: Queue,
+    private prisma: PrismaService
+  ) { }
 
   async create(createSubmissionDto: CreateSubmissionDto) {
     const newSubmission = await this.prisma.submission.create({
@@ -14,6 +19,8 @@ export class SubmissionService {
         problemId: createSubmissionDto.problemId,
       }
     })
+
+    await this.submissionQueue.add('judge', { submissionId: newSubmission.id });
 
     return { message: "Submission created", submission: newSubmission }
   }
