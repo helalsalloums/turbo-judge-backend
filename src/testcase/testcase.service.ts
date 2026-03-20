@@ -21,4 +21,13 @@ export class TestcaseService {
 
     return { message: `test cases fetched for problem ${problemId}`, testCases }
   }
+
+  async delete(testCaseId: number) {
+
+    await this.prisma.testCase.delete({
+      where: { id: testCaseId }
+    })
+
+    return { message: "test case deleted" }
+  }
 }

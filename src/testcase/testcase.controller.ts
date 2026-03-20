@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { TestcaseService } from './testcase.service';
 import { CreateTestCaseDto } from './dto/create-testcase.dto';
 import { Role } from 'src/auth/roles.decorator';
@@ -21,5 +21,10 @@ export class TestcaseController {
   @Get(':id')
   findAll(@Param('id') problemId: string) {
     return this.testCaseService.findAll(+problemId);
+  }
+
+  @Delete(':id')
+  delte(@Param('id') testCaseId: string) {
+    return this.testCaseService.delete(+testCaseId);
   }
 }
