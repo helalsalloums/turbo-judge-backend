@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProblemModule } from './problem/problem.module';
 import { QueueModule } from './queue/queue.module';
+import { TestcaseModule } from './testcase/testcase.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { QueueModule } from './queue/queue.module';
     SubmissionModule,
     PrismaModule,
     ProblemModule,
-    QueueModule
+    QueueModule,
+    TestcaseModule
   ],
   controllers: [AppController],
   providers: [AppService],

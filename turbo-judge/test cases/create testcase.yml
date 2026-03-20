@@ -1,0 +1,22 @@
+info:
+  name: create testcase
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:3000/testcase/3
+  body:
+    type: json
+    data: |-
+      {
+        "input" : "1 5",
+        "output" : "6"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
