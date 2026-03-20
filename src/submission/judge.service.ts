@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { spawn } from "child_process";
 import { randomUUID } from "crypto";
-import { writeFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SubmissionGateway } from "./submission.gateway";
 
@@ -51,6 +51,9 @@ export class JudgeService {
 
   async judge(submissionId: number): Promise<string | undefined> {
 
+    const sourceFile = `/tmp/${randomUUID()}.cpp`;
+    const binaryFile = `/tmp/${randomUUID()}`;
+
     try {
       const submission = await this.prisma.submission.findUnique({
         where: { id: submissionId }
@@ -69,9 +72,8 @@ export class JudgeService {
       if (!problem) throw new Error('Problem not found');
       if (!testCases) throw new Error('TestCases not found');
 
-      const sourceFile = `/tmp/${randomUUID()}.cpp`;
+
       await writeFile(sourceFile, submission!.code);
-      const binaryFile = `/tmp/${randomUUID()}`;
 
       this.submissionGateway.server.emit('submission:status', { submissionId, status: 'compiling' });
       this.prisma.submission.update({
@@ -129,6 +131,9 @@ export class JudgeService {
       if (error.message.startsWith('Wrong answer')) return 'WA';
       if (error.message === 'TLE') return 'TLE';
       return 'Runtime Error';
+    } finally {
+      await unlink(sourceFile).catch(() => { });
+      await unlink(binaryFile).catch(() => { });
     }
   }
 }
