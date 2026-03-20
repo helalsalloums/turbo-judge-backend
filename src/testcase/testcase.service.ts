@@ -13,4 +13,12 @@ export class TestcaseService {
 
     return { message: "test case created successfully", test_case: newTestCase }
   }
+
+  async findAll(problemId: number) {
+    const testCases = await this.prisma.testCase.findMany({
+      where: { problemId: problemId }
+    });
+
+    return { message: `test cases fetched for problem ${problemId}`, testCases }
+  }
 }
