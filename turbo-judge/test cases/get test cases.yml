@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:3000/testcase/3
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzc0MDE4MjU0LCJleHAiOjE3NzQwMjE4NTR9.dHcnKMsEJEhDGez2K3D6zoVclxTsLAWMvi1slBUMeys
 
 settings:
   encodeUrl: true

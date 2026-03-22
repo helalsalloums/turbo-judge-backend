@@ -12,11 +12,11 @@ http:
       {
         "code": "#include <iostream>\nusing namespace std;\nint main() {\n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    return 0;\n}",
         "language": "cpp",
-        "problemId": 1
+        "problemId": 3
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzczOTU0MTY0LCJleHAiOjE3NzM5NTc3NjR9.6yNJUeshT2Hf5_BzQel6u7ZTLjAV_Tvzt38gnPleqd0
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzc0MDE2NTkzLCJleHAiOjE3NzQwMjAxOTN9.qHP6A17buMZswuX-nNgmeklYdo1qX_JDq7sbOeWQLdQ
 
 settings:
   encodeUrl: true
