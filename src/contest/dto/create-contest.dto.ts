@@ -8,6 +8,5 @@ export class CreateContestDto {
   startTime: string;
 
   @IsDateString()
-  @ValidateIf((o) => new Date(o.endTime) > new Date(o.startTime))
   endTime: string;
 }

@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { SubmissionService } from './submission.service';
-import { CreateProblemDto } from 'src/problem/dto/create-problem.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('submission')

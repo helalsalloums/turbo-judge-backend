@@ -1,0 +1,25 @@
+info:
+  name: create contest
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:3000/contest
+  body:
+    type: json
+    data: |-
+      {
+        "title": "ICPC Practice Round",
+        "startTime": "2026-03-25T10:00:00.000Z",
+        "endTime": "2026-03-25T13:00:00.000Z"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3NDIyODQ3OCwiZXhwIjoxNzc0MjMyMDc4fQ.q5VTda17ybzvMylqiaSwARKOITCXNNie7WizgKfORe8
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
