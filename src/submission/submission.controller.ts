@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { SubmissionService } from './submission.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
@@ -20,8 +20,8 @@ export class SubmissionController {
   }
 
   @Get()
-  findAll() {
-    return this.submissionService.findAll();
+  findAll(@Query('page') page: string = '1', @Query('limi') limit: string = '10') {
+    return this.submissionService.findAll(+page, +limit);
   }
 
 }

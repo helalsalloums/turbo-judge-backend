@@ -5,7 +5,14 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/problem/
+  url: http://localhost:3000/problem?page=8&limit=5
+  params:
+    - name: page
+      value: "8"
+      type: query
+    - name: limit
+      value: "5"
+      type: query
   auth: inherit
 
 settings:

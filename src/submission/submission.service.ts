@@ -36,8 +36,11 @@ export class SubmissionService {
     return { message: "Submission found", submission }
   }
 
-  async findAll() {
-    const submissions = await this.prisma.submission.findMany();
+  async findAll(page: number, limit: number) {
+    const submissions = await this.prisma.submission.findMany({
+      skip: limit * (page - 1),
+      take: limit,
+    });
 
     return { message: "Submissions fetched", submissions };
   }

@@ -27,8 +27,11 @@ export class ProblemService {
     return { message: "Problem found", problem }
   }
 
-  async findAll() {
-    const problems = await this.prisma.problem.findMany();
+  async findAll(page: number, limit: number) {
+    const problems = await this.prisma.problem.findMany({
+      skip: limit * (page - 1),
+      take: limit,
+    });
 
     return { message: "Problems fetched", problems }
   }

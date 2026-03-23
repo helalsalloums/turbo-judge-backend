@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
@@ -25,8 +25,8 @@ export class ProblemController {
   }
 
   @Get()
-  findAll() {
-    return this.problemService.findAll();
+  findAll(@Query('page') page: string = '1', @Query('limit') limit: string = '10') {
+    return this.problemService.findAll(+page, +limit);
   }
 
   @Role('ADMIN')
