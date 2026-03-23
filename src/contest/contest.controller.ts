@@ -37,4 +37,20 @@ export class ContestController {
   unregister(@Param('id', ParseIntPipe) contestId: number, @Req() req: any) {
     return this.contestService.unregister(contestId, req.user.userId);
   }
+
+
+  @Role('ADMIN')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post(':id/problems')
+  addProblem(@Param('id', ParseIntPipe) contestId: number, @Body('problemId', ParseIntPipe) problemId: number) {
+    return this.contestService.addProblem(contestId, problemId);
+  }
+
+
+  @Role('ADMIN')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete(':id/problems')
+  deleteProblem(@Param('id', ParseIntPipe) contestId: number, @Body('problemId', ParseIntPipe) problemId: number) {
+    return this.contestService.deleteProblem(contestId, problemId);
+  }
 }

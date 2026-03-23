@@ -1,0 +1,23 @@
+info:
+  name: delete problem
+  type: http
+  seq: 7
+
+http:
+  method: DELETE
+  url: http://localhost:3000/contest/1/problems
+  body:
+    type: json
+    data: |-
+      {
+        "problemId" : 3
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3NDI3NTA3MiwiZXhwIjoxNzc0Mjc4NjcyfQ.7NTJoqss3arUYJzQwu7AepDORqDbp0WqTmfG3k8Vp-s
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

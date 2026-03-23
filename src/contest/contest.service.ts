@@ -65,4 +65,45 @@ export class ContestService {
       throw (error)
     }
   }
+
+  async addProblem(contestId: number, problemId: number) {
+    await this.findOne(contestId);
+
+    try {
+      const problem = await this.prisma.problem.findUnique({
+        where: { id: problemId }
+      })
+
+      if (!problem) throw new NotFoundException('Problem not found')
+
+      const contestProblem = await this.prisma.contestProblem.create({
+        data: { contestId, problemId }
+      })
+
+      return { message: "problem added to contest", contestProblem }
+
+    } catch (error) {
+      if (error.code === 'P2002') throw new ConflictException('Problem already in this contest')
+      throw error
+    }
+  }
+
+  async deleteProblem(contestId: number, problemId: number) {
+
+    try {
+      const contestProblem = await this.prisma.contestProblem.findUnique({
+        where: { contestId_problemId: { contestId, problemId } }
+      })
+
+      if (!contestProblem) throw new NotFoundException('Problem not found for this contest')
+
+      await this.prisma.contestProblem.delete({
+        where: { id: contestProblem.id }
+      })
+
+      return { message: "problem removed from contest" }
+    } catch (error) {
+      throw error
+    }
+  }
 }
