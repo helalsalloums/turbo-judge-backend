@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ProblemModule } from './problem/problem.module';
 import { QueueModule } from './queue/queue.module';
 import { TestcaseModule } from './testcase/testcase.module';
+import { ContestModule } from './contest/contest.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { TestcaseModule } from './testcase/testcase.module';
     PrismaModule,
     ProblemModule,
     QueueModule,
-    TestcaseModule
+    TestcaseModule,
+    ContestModule
   ],
   controllers: [AppController],
   providers: [AppService],
