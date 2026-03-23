@@ -45,4 +45,24 @@ export class ContestService {
       throw (error)
     }
   }
+
+  async unregister(contestId: number, userId: number) {
+    await this.findOne(contestId);
+
+    try {
+      const registration = await this.prisma.contestRegistration.findUnique({
+        where: { contestId_userId: { contestId, userId } }
+      })
+
+      if (!registration) throw new NotFoundException('registration not found')
+
+      await this.prisma.contestRegistration.delete({
+        where: { id: registration.id }
+      })
+
+      return { message: "successfully unregistered", registration }
+    } catch (error) {
+      throw (error)
+    }
+  }
 }
