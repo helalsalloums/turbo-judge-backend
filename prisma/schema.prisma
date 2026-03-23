@@ -21,6 +21,7 @@ model User {
   createdAt DateTime @default(now())
   refreshTokens RefreshToken[]
   contestRegistrations ContestRegistration[]
+  submissions Submission[]
 }
 
 model RefreshToken {
@@ -44,6 +45,8 @@ model Submission {
   memory      Int?
   createdAt   DateTime  @default(now())
   problem     Problem   @relation(fields: [problemId], references: [id])
+  userId      Int
+  user        User      @relation(fields : [userId] , references : [id] , onDelete:Cascade)
 }
 
 model Problem {

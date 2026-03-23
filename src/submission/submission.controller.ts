@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { SubmissionService } from './submission.service';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
@@ -10,8 +10,8 @@ export class SubmissionController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createSubmissionDto: CreateSubmissionDto) {
-    return this.submissionService.create(createSubmissionDto);
+  create(@Body() createSubmissionDto: CreateSubmissionDto, @Req() req: any) {
+    return this.submissionService.create(createSubmissionDto, req.user.userId);
   }
 
   @Get(':id')

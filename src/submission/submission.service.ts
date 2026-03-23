@@ -11,12 +11,13 @@ export class SubmissionService {
     private prisma: PrismaService
   ) { }
 
-  async create(createSubmissionDto: CreateSubmissionDto) {
+  async create(createSubmissionDto: CreateSubmissionDto, userId: number) {
     const newSubmission = await this.prisma.submission.create({
       data: {
         code: createSubmissionDto.code,
         language: createSubmissionDto.language,
         problemId: createSubmissionDto.problemId,
+        userId: userId
       }
     })
 
