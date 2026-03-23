@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateContestDto } from './dto/create-contest.dto';
 import { ContestService } from './contest.service';
 import { Role } from 'src/auth/roles.decorator';
@@ -24,5 +24,11 @@ export class ContestController {
   @Get(':id')
   findOne(@Param('id') contestId: string) {
     return this.contestService.findOne(+contestId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/register')
+  register(@Param('id', ParseIntPipe) contestId: number, @Req() req: any) {
+    return this.contestService.register(contestId, req.user.userId);
   }
 }

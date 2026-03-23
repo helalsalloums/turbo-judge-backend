@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateContestDto } from './dto/create-contest.dto';
 
@@ -29,5 +29,20 @@ export class ContestService {
     if (!contest) throw new NotFoundException('Contest not found')
 
     return { message: "contest fetched", contest }
+  }
+
+  async register(contestId: number, userId: number) {
+    await this.findOne(contestId);
+
+    try {
+      const registration = await this.prisma.contestRegistration.create({
+        data: { contestId, userId }
+      })
+
+      return { message: "successfully registered", registration }
+    } catch (error) {
+      if (error.code === 'P2002') throw new ConflictException('Already registered to this contest')
+      throw (error)
+    }
   }
 }

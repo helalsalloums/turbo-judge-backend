@@ -1,0 +1,17 @@
+info:
+  name: register
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: http://localhost:3000/contest/2/register
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3NDI3MDg0NywiZXhwIjoxNzc0Mjc0NDQ3fQ.8pjwijS84g7t0JiCqEGYErOyj8M8Nk4Oce_nhS4LTp0
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
