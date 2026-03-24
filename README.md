@@ -1,98 +1,186 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Turbo Judge
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A competitive programming judge system built from scratch — like Codeforces, but engineered end-to-end by one developer.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Overview
 
-## Description
+Turbo Judge is a full-featured backend for a competitive programming platform. It handles user authentication, problem management, code submission, real-time judging, and contest management.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The judge pipeline compiles and executes submitted C/C++ code in isolated child processes, enforces time and memory limits, and streams per-test-case verdicts to clients in real time via WebSockets.
 
-## Project setup
+## Architecture
 
-```bash
-$ npm install
+```
+Client
+  │
+  ▼
+NestJS REST API
+  │
+  ├── Auth (JWT + Refresh Tokens)
+  ├── Problems (CRUD, admin-only writes)
+  ├── Test Cases
+  ├── Submissions ──► BullMQ Queue ──► SubmissionProcessor
+  │                                         │
+  │                                    JudgeService
+  │                                    (compile → run → verdict)
+  │                                         │
+  └── WebSocket Gateway ◄───────── Real-time status updates
+  │
+PostgreSQL (via Prisma)
+Redis (BullMQ job queue)
 ```
 
-## Compile and run the project
+## Features
+
+### Authentication
+- JWT access tokens (short-lived) + refresh token rotation
+- bcrypt password hashing
+- HTTP-only cookie handling
+- Role-based access control (USER / ADMIN)
+
+### Problems & Test Cases
+- Full CRUD for problems (title, difficulty, topics, time limit, memory limit)
+- Admin-only write access via `RolesGuard`
+- Test case management with cascade deletes
+
+### Judge Pipeline
+- Submission queued via BullMQ backed by Redis
+- Code compiled with `g++` in a child process
+- Each test case run with enforced time limit (TLE detection via `setTimeout` + `proc.kill()`)
+- Verdicts: `Accepted`, `Wrong Answer`, `Time Limit Exceeded`, `Compilation Error`, `Runtime Error`
+- Temp files cleaned up in `finally` block after every submission
+- Real-time status emitted via WebSocket: `compiling` → `Running on test N` → final verdict
+
+### Contests
+- Create contests with start/end times
+- Register/unregister users
+- Add/remove problems from contests
+- Unique constraint on (contestId, userId) and (contestId, problemId)
+
+### API
+- Paginated `GET /problems` and `GET /submissions`
+- Protected routes with `JwtAuthGuard`
+- Global `ValidationPipe` with whitelist
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | NestJS (TypeScript) |
+| Database | PostgreSQL via Prisma ORM |
+| Queue | BullMQ + Redis |
+| Real-time | WebSockets (Socket.io Gateway) |
+| Auth | JWT + bcrypt |
+| Compiler | g++ (C/C++ submissions) |
+
+## Getting Started
+
+### Prerequisites
+- Node.js
+- Docker (for PostgreSQL and Redis)
+- g++ installed on the host machine
+
+### 1. Start infrastructure
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+sudo docker start turbo-judge-db
+sudo docker start turbo-judge-redis
 ```
 
-## Run tests
+### 2. Configure environment
+
+Create a `.env` file in the root:
+
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/turbo_judge"
+
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE_IN=1h
+
+REFRESH_JWT_SECRET=your_refresh_secret
+REFRESH_JWT_EXPIRE_IN=7d
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+### 3. Run migrations
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx prisma migrate dev
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 4. Start the server
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## API Endpoints
 
-## Resources
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/auth/signup` | Register a new user |
+| POST | `/auth/login` | Login and receive tokens |
+| POST | `/auth/refresh` | Rotate refresh token |
+| POST | `/auth/logout` | Invalidate refresh token |
 
-Check out a few resources that may come in handy when working with NestJS:
+### Problems
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/problem` | List problems (paginated) |
+| GET | `/problem/:id` | Get problem by ID |
+| POST | `/problem` | Create problem (admin) |
+| PATCH | `/problem/:id` | Update problem (admin) |
+| DELETE | `/problem/:id` | Delete problem (admin) |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Test Cases
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/testcase/:id` | Add test case to problem |
+| GET | `/testcase/:id` | Get test cases for problem |
+| DELETE | `/testcase/:id` | Delete test case |
 
-## Support
+### Submissions
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/submission` | Submit code (triggers judge pipeline) |
+| GET | `/submission` | List submissions (paginated) |
+| GET | `/submission/:id` | Get submission by ID |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Contests
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/contest` | Create contest (admin) |
+| GET | `/contest` | List contests |
+| GET | `/contest/:id` | Get contest by ID |
+| POST | `/contest/:id/register` | Register for contest |
+| DELETE | `/contest/:id/unregister` | Unregister from contest |
+| POST | `/contest/:id/problems` | Add problem to contest |
+| DELETE | `/contest/:id/problems` | Remove problem from contest |
 
-## Stay in touch
+## WebSocket Events
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Connect to the WebSocket server and listen for:
 
-## License
+```
+submission:status → { submissionId, status }
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Status values: `compiling`, `Running on test N`, `Accepted`, `Wrong Answer on test N`, `TLE`, `Compilation Error`, `Runtime Error`
+
+## Planned Improvements
+
+- Docker-based sandbox isolation per submission (replace child process with containerized execution)
+- Support for more languages (Python, Java)
+- Contest leaderboard with real-time scoring
+- Next.js frontend
+- Rate limiting on submission endpoints
+- Admin dashboard
+
+## Database Schema
+
+Core models: `User`, `Problem`, `TestCase`, `Submission`, `Contest`, `ContestProblem`, `ContestRegistration`, `RefreshToken`
+
+Full schema available in [`prisma/schema.prisma`](./prisma/schema.prisma).
